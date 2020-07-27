@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<link rel="stylesheet" href="../static/plugins/bootstrap.min.css">
+	<link rel="stylesheet" href="../static/plugins/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../static/css/basic.css">
+	<link rel="stylesheet" href="../static/css/colors.css">
+	<style> * { margin: 0; padding: 0; } li > a > i, button > i { color: white }  </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                  data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">More</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">PyDict</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#"><i class="fa fa-home"></i> Home</a></li>
+          </ul>
+        </div>
+      <!--/.nav-collapse -->
+      </div>
+    </nav>
+	<div class="container-after-bar">
+		<div class="row">
+			<div class="col-md-3 bar">
+				<div class="bar_list">
+					<button type="button" class="bar_item active">All</button>
+					<button type="button" class="bar_item">Search</button>
+				</div>
+				<div id="example">
+					<div class="panel panel-default black_theme">
+						<div class="panel-heading black_theme" style="padding: 20px; display: flex; justify-content: space-between">
+							<h1 id="word_bo" class="panel-title white" style="font-size: 28px;"></h1>
+							<h1 id="word_me" class="panel-title  white"></h1>
+						</div>
+						<div class="panel-body black_theme" style="height: 270px">
+							<div class="panel panel-default black_theme" >
+							  <div id="eng" class="panel-body white" style="font-size: 18px; ">
+
+							  </div>
+							</div>
+							<div id="tra" class="panel-body white" style="font-size: 18px; ">
+
+							  </div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-9 content" style="overflow-y: scroll">
+				{% block content %}
+
+				{% endblock %}
+			</div>
+		</div>
+	</div>
+
+<script type="text/javascript" src="../static/plugins/jquery-3.4.1.js"></script>
+<script type="text/javascript" src="../static/plugins/bootstrap.min.js"></script>
+<script>
+
+
+
+</script>
+
+	{% block script %}
+
+	{% endblock %}
+</body>
+</html>

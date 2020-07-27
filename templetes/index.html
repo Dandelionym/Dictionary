@@ -1,0 +1,195 @@
+{% extends 'bar.html' %}
+
+{% block content %}
+	<div style="position: fixed; height: auto; background: white; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);margin-right: 10px; transition: .5s;">
+		<div style="display: flex; justify-content: space-between">
+			<div class="col-md-8">
+				<h3><span class="red">{{ sum }}</span> words &emsp;<span id="add" role="button" class="fa fa-plus-square-o"></span></h3>
+			</div>
+			<div class="col-md-4">
+				<div class="input-group" style="margin: 15px;">
+					<input type="text" class="form-control"
+					       placeholder="Search for..." style="height: 40px">
+					<span class="input-group-btn">
+		                <button class="btn btn-default" type="button" style="height: 40px; width: 60px">Go!</button>
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="" id="add_board" style="margin: 10px;transition: .5s; overflow-y: hidden">
+			<div class="input-group" style=" display: flex; justify-content: space-between">
+				<input type="text" style="width: 200px" class="form-control" placeholder="word" aria-describedby="basic-addon1">
+				<input type="text" style="width: 245px" class="form-control" placeholder="meaning 1" aria-describedby="basic-addon1">
+				<input type="text" style="width: 245px" class="form-control" placeholder="meaning 2" aria-describedby="basic-addon1">
+				<input type="text" style="width: 290px" class="form-control" placeholder="example sentence" aria-describedby="basic-addon1">
+				<button style="width: 80px" class="btn btn-success">Submit</button>
+			</div>
+		</div>
+	</div>
+
+	<div style="width: 100%; margin-top: 100px;">
+		<div class="bs-example" data-example-id="hoverable-table">
+			<table class="table table-hover">
+				<thead>
+				<tr>
+					<th>No.</th>
+					<th>Mark</th>
+					<th>Word</th>
+					<th>Meaning 1</th>
+					<th>Meaning 2</th>
+					<th>Operate</th>
+				</tr>
+				</thead>
+				<tbody>
+				{% for word in words %}
+					<tr>
+						<th scope="row">{{ forloop.counter }}</th>
+						{% if word.label == '-' %}
+							<td><span class="fa fa-heart-o red" role="button" style="font-size: 21px; margin: 5px; opacity: .1"></span></td>
+						{% else%}
+							<td><i class="fa fa-heart red" style="font-size: 21px; margin: 5px"></i></td>
+						{% endif %}
+						<td>
+							<button type="button" class="btn btn-default word">
+							  {{ word.word }}
+							</button>
+						</td>
+						<td>{{ word.mean1 }}</td>
+						<td>{{ word.mean2 }}</td>
+						<td><button class="btn btn-default no_border"><i class="fa fa-wrench black"></i></button>
+							<button class="btn btn-default no_border"><i class="fa fa-trash red"></i></button></td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+{% endblock %}
+
+
+{% block script %}
+	<script>
+		{#$.noConflict();#}
+		$(function () {
+            $('[data-toggle="popover"]').popover()
+			$('#down').click(function () {$('.collapse').collapse();});
+			$('.word').click(function () {
+	            let word = $(this);
+				$.ajax({
+					url: '/egstc/',
+					type: 'POST',
+					dataType: 'JSON',
+					data: {'word': word.text(), },
+	                success: function (arg) {
+	                    if (arg.status) {
+	                        let eng = arg.eg.split('。')[0].split('.')[0] + '.'
+		                    let tra = arg.eg.split('。')[0].split('.')[1] + '。'
+		                    if(eng.length < 5){
+		                        $('#eng').text("You can have a try and get the meaning.")
+		                        $('#tra').text("这个单词你自己查吧，我就不说了")
+		                    }else{
+		                        $('#word_bo').text(word.text())
+		                        $('#eng').text(eng)
+	                            $('#tra').text(tra)
+			                    $('#word_me').text(word.parent().next().text())
+		                    }
+	                    } else {
+	                        alert(arg.msg)
+	                    }
+	                }
+				})
+		    })
+		})
+	</script>
+	<script>
+	alert("Are you sure to delete this item?“);
+	$('#add').click(function () {
+	    let b = $('#add_board');
+	    if(b.hasClass('showIn')){
+	        b.removeClass('showIn')
+		    b.fadeOut(500)
+	    }else{
+	        b.addClass('showIn')
+		    b.attr('height', '38px')
+		    b.fadeIn(500)
+	    }
+    })
+	</script>
+	<script>
+		$('#submit_all').click(function () {
+			let wd = $('#words_input').text();
+			let m1 = $('#mean1_input').text();
+			let m2 = $('#mean2_input').text();
+			let egstc_eg = $('#eg_stc').text();
+
+			if(check_all_info(wd, m1, m2, egstc)){}
+			$.ajax({
+				url: '/add_info/',
+				type: 'POST',
+				data: {
+				    'wd': wd,
+					'm1': m1,
+					'm2': m2,
+					'eg': egstc_eg
+				},
+				success: function (args) {
+				    if(args.status){
+				        slert("Insert successfully!");
+					    location.reload();
+				    }
+				}
+ 			})
+		})
+
+
+	</script>
+	<script>
+	function modify() {
+        $(this).click(function () {
+            let word = $(this).parent().next(0);
+            let mean1 = $(this).parent().next(0).next(0);
+            let mean2 = $(this).parent().next(0).next(0).next(0);
+            let egstc = $(this).parent().next(0).next(0).next(0).next(0);
+            $('#change_module').removeClass('hide');
+            fillin_forms();
+
+            $.ajax({
+                url: '/change/',
+                type: 'POST',
+                data: {
+                    'wd': $('#wd_ch').val(),
+                    'm1': $('#m1_ch').val(),
+                    'm2': $('#m2_ch').val(),
+                    'eg': $('#eg_ch').val()
+                },
+                success: function (args) {
+                    if (args.status) {
+                        alert("Modified successfully! ");
+                        location.reload();
+                    }
+                }
+            })
+        })
+    }
+	</script>
+	<script>
+		function delete(obj) {
+		    let word = $(this).parent().next(0);
+		    if (confirm("Are your sure to delete this item?")) {
+		        $.ajax({
+			        url: '/delete/',
+			        type: 'POST',
+			        data: { 'wd'; word },
+			        success: function (args) {
+			            if(args,status) {
+			                alert("Delete successfully !")
+			            }else {
+			                alert(args.msg)
+			            }
+			        }
+		        })
+		    }
+
+		}
+	</script>
+{% endblock %}
